@@ -1,17 +1,24 @@
 import { useNavigate } from 'react-router-dom'
 
+import Button from '../components/Button';
+import useAuth from '../hooks/useAuth';
+
 import illustrationImg from '../assets/images/illustration.svg';
 import logoImg from '../assets/images/logo.svg';
 import googleIconImg from '../assets/images/google-icon.svg';
 
-import Button from '../components/Button';
 
 import '../styles/auth.scss';
 
 const Home = () => {
   const navigate = useNavigate()
+  const { user, signInWithGoogle } = useAuth()
 
-  function handleCreateRoom() {
+  async function handleCreateRoom() {
+    if (!user) {
+      await signInWithGoogle()
+    }
+
     navigate('/rooms/new')
   }
 
