@@ -18,13 +18,19 @@ type RoomParams = {
 }
 
 const Room = () => {
-  const { user } = useAuth();
+  const { user, signInWithGoogle } = useAuth();
   const params = useParams<RoomParams>()
   const [newQuestion, setNewQuestion] = useState('')
 
   const roomId = String(params.id)
 
   const { questions, title } = useRoom(roomId)
+
+  async function handleSignIn() {
+    if (!user) {
+      await signInWithGoogle()
+    }
+  }
 
   async function handleSendQuestion(event: FormEvent) {
     event.preventDefault()
@@ -84,7 +90,7 @@ const Room = () => {
                 <span>{user.name}</span>
               </div>
             ) : (
-              <span>Para enviar uma pergunta, <button>faça seu login</button>.</span>
+              <span>Para enviar uma pergunta, <button onClick={handleSignIn}>faça seu login</button>.</span>
             )}
             <Button type="submit" disabled={!user}>Enviar pergunta</Button>
           </div>
