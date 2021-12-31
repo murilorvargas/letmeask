@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import useAuth from '../hooks/useAuth'
 import useRoom from '../hooks/useRoom'
@@ -19,11 +19,20 @@ type RoomParams = {
 
 const AdminRoom = () => {
   const { user } = useAuth();
+  const navigate = useNavigate()
   const params = useParams<RoomParams>()
 
   const roomId = String(params.id)
 
   const { questions, title } = useRoom(roomId)
+
+  async function handleEndRoom() {
+    await database.ref(`rooms/${roomId}`).update({
+      endedAt: new Date(),
+    })
+
+    navigate('/');
+  }
 
   async function handleDeleteQuestion(questionId: string) {
     if (window.confirm("Tem certeza que você deseja excluir esta pergunta")) {
@@ -38,7 +47,7 @@ const AdminRoom = () => {
           <img src={logoImg} alt="Letmeask" />
           <div>
             <RoomCode code={roomId} />
-            <Button isOutlined >Encerrar sala</Button>
+            <Button isOutlined onClick={handleEndRoom}>Encerrar sala</Button>
           </div>
         </div>
       </header>
